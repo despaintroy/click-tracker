@@ -1,17 +1,29 @@
 import {NextResponse} from "next/server"
 import {qrCodeFormSchema} from "@/components/Forms/QRCodeForm"
 import QRCode from "qrcode"
+import {z} from "zod"
+
+const qrCodeEndpointSchema = qrCodeFormSchema.extend({
+  margin: z
+    .string()
+    .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
+      message: "Margin must be a number greater than 0"
+    }),
+  fileType: z.enum(["svg", "png"]).default("svg")
+})
+
+export type QRCodeEndpoint = z.infer<typeof qrCodeEndpointSchema>
 
 export async function GET(request: Request) {
   const {searchParams} = new URL(request.url)
   const body = Object.fromEntries(searchParams.entries())
-  const result = qrCodeFormSchema.safeParse(body)
+  const result = qrCodeEndpointSchema.safeParse(body)
   if (result.success) {
-    const {url, light, dark, margin} = result.data
-    const filePath = `/tmp/qr-code.svg`
+    const {url, light, dark, margin, fileType} = result.data
+    const filePath = `/tmp/qr-code.${fileType}`
     await QRCode.toFile(filePath, url, {
       color: {light, dark},
-      margin
+      margin: Number(margin)
     })
 
     const {
@@ -24,7 +36,7 @@ export async function GET(request: Request) {
       await (await import("fs")).promises.readFile(filePath),
       {
         headers: {
-          "Content-Type": "image/svg",
+          "Content-Type": fileType === "svg" ? "image/svg+xml" : "image/png",
           "Content-Length": size.toString()
         }
       }

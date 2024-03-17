@@ -1,6 +1,6 @@
 "use client"
 
-import {Box, Button, Container, Typography} from "@mui/joy"
+import {Box, Button, Container, Stack, Typography} from "@mui/joy"
 import {useCallback, useEffect, useState} from "react"
 import QRCode from "qrcode"
 import {
@@ -12,11 +12,15 @@ import {
 } from "@/components/Forms/QRCodeForm"
 import {FormProvider, useForm} from "react-hook-form"
 import {usePathname, useRouter, useSearchParams} from "next/navigation"
+import {QRCodeEndpoint} from "@/app/api/generate-code/route"
+import styles from "./page.module.scss"
 
 export default function QRCodePage() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
+
+  const [hasCode, setHasCode] = useState(false)
 
   const getQRCodeFromSearchParams = useCallback((): Partial<Models.QRCode> => {
     const parseResult = qrCodeFormSchema.safeParse(
@@ -56,6 +60,7 @@ export default function QRCodePage() {
     const canvas = document.getElementById("qr-image") as HTMLCanvasElement
 
     if (!values.url) {
+      setHasCode(false)
       canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height)
       return
     }
@@ -70,6 +75,7 @@ export default function QRCodePage() {
     }).catch((err) => {
       console.error(err)
     })
+    setHasCode(true)
   }, [values])
 
   return (
@@ -84,17 +90,33 @@ export default function QRCodePage() {
               onSubmit={console.log}
               sx={{mb: 2}}
             />
-            <canvas id="qr-image" />
-            <Button
-              component="a"
-              download="my-qr-code.svg"
-              href={`/api/generate-code?${new URLSearchParams({
-                ...values,
-                margin: values.margin.toString()
-              }).toString()}`}
-            >
-              Download SVG
-            </Button>
+            <canvas id="qr-image" className={styles.qrCanvas} aria-hidden={!hasCode} />
+            <Stack direction="row" spacing={2} mt={2}>
+              <Button
+                component="a"
+                download="my-qr-code.svg"
+                href={`/api/generate-code?${new URLSearchParams({
+                  ...values,
+                  margin: values.margin.toString(),
+                  fileType: "svg"
+                } satisfies QRCodeEndpoint).toString()}`}
+                disabled={!hasCode}
+              >
+                Download SVG
+              </Button>
+              <Button
+                component="a"
+                download="my-qr-code.png"
+                href={`/api/generate-code?${new URLSearchParams({
+                  ...values,
+                  margin: values.margin.toString(),
+                  fileType: "png"
+                } satisfies QRCodeEndpoint).toString()}`}
+                disabled={!hasCode}
+              >
+                Download PNG
+              </Button>
+            </Stack>
           </Box>
         </FormProvider>
       </Container>
