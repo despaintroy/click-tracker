@@ -1,6 +1,6 @@
 "use client"
 
-import {Box, Container, Typography} from "@mui/joy"
+import {Box, Button, Container, Typography} from "@mui/joy"
 import {useCallback, useEffect, useState} from "react"
 import QRCode from "qrcode"
 import {
@@ -67,10 +67,9 @@ export default function QRCodePage() {
         dark: values.dark
       },
       margin: values.margin
+    }).catch((err) => {
+      console.error(err)
     })
-      .catch((err) => {
-        console.error(err)
-      })
   }, [values])
 
   return (
@@ -86,6 +85,16 @@ export default function QRCodePage() {
               sx={{mb: 2}}
             />
             <canvas id="qr-image" />
+            <Button
+              component="a"
+              download="my-qr-code.svg"
+              href={`/api/generate-code?${new URLSearchParams({
+                ...values,
+                margin: values.margin.toString()
+              }).toString()}`}
+            >
+              Download SVG
+            </Button>
           </Box>
         </FormProvider>
       </Container>
