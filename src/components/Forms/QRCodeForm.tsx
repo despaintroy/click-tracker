@@ -54,7 +54,9 @@ export const QRCodeForm: FC<QRCodeFormProps> = (props) => {
         maxFieldWidth={maxFieldWidth}
       >
         <input {...register("light")} type="color" />
-        {errors.light && <FormHelperText>{errors.light.message}</FormHelperText>}
+        {errors.light && (
+          <FormHelperText>{errors.light.message}</FormHelperText>
+        )}
       </LabeledField>
 
       <LabeledField
@@ -76,18 +78,17 @@ export const QRCodeForm: FC<QRCodeFormProps> = (props) => {
 }
 
 const qrCodeFormSchema: ZodType<QRCodeFormValues> = z.object({
-    url: z.string(),
-    light: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
-      message: "Invalid hex color"
-    }),
-    dark: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
-      message: "Invalid hex color"
-    })
-  }
-)
+  url: z.string(),
+  light: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+    message: "Invalid hex color"
+  }),
+  dark: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+    message: "Invalid hex color"
+  })
+})
 
 export function getQRCodeFormInitializer(
-  qrCode?: Models.QRCode
+  qrCode?: Partial<Models.QRCode>
 ): UseFormProps<QRCodeFormValues> {
   return {
     resolver: zodResolver(qrCodeFormSchema),
@@ -96,7 +97,7 @@ export function getQRCodeFormInitializer(
 }
 
 export function getQRCodeFormValues(
-  qrCode: Models.QRCode | null
+  qrCode: Partial<Models.QRCode> | null
 ): QRCodeFormValues {
   return {
     url: qrCode?.url ?? "",

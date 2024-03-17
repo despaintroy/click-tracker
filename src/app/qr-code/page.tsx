@@ -1,7 +1,7 @@
 "use client"
 
 import {Box, Container, Typography} from "@mui/joy"
-import {useEffect, useState} from "react"
+import {useCallback, useEffect, useState} from "react"
 import QRCode from "qrcode"
 import styles from "./page.module.scss"
 import {
@@ -11,21 +11,41 @@ import {
   QRCodeFormValues
 } from "@/components/Forms/QRCodeForm"
 import {FormProvider, useForm} from "react-hook-form"
+import {usePathname, useRouter, useSearchParams} from "next/navigation"
 
 export default function QRCodePage() {
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
+
+  const getQRCodeFromSearchParams = useCallback(() => {
+    return Object.fromEntries(searchParams)
+  }, [searchParams])
+
   const [values, setValues] = useState<QRCodeFormValues>(
-    getQRCodeFormValues(null)
+    getQRCodeFormValues(getQRCodeFromSearchParams())
   )
 
-  const formMethods = useForm<QRCodeFormValues>(getQRCodeFormInitializer())
+  const formMethods = useForm<QRCodeFormValues>(
+    getQRCodeFormInitializer(getQRCodeFromSearchParams())
+  )
   const {watch} = formMethods
 
   useEffect(() => {
     const subscription = watch((value, {name, type}) => {
+      if (type !== "change" || !name) return
+
       setValues((prev) => ({...prev, ...value}))
+      const params = new URLSearchParams(searchParams)
+      Object.entries(value).forEach(([key, value]) => {
+        if (value) params.set(key, value)
+        else params.delete(key)
+      })
+      // @ts-ignore
+      router.replace(`${pathname}?${params.toString()}`)
     })
     return () => subscription.unsubscribe()
-  }, [watch])
+  }, [pathname, router, searchParams, watch])
 
   useEffect(() => {
     const img = document.getElementById("qr-image")
