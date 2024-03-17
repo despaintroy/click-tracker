@@ -3,7 +3,6 @@
 import {FC} from "react"
 
 export const DesktopAuthButton: FC = () => {
-
   return null
 
   // const auth = useAuth()
@@ -30,7 +29,6 @@ export const DesktopAuthButton: FC = () => {
 }
 
 export const MobileAuthButton: FC = () => {
-
   return null
 
   // const auth = useAuth()

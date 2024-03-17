@@ -19,14 +19,14 @@ const MainLayout: FC<PropsWithChildren> = ({children}) => {
             alignItems: "center"
           }}
         >
-          <MobileDrawer/>
+          <MobileDrawer />
 
           <NextLink
             href="/"
             style={{marginRight: "auto", paddingTop: 4}}
             aria-label="Home"
           >
-            <img src="/vercel.svg" alt="" height={40}/>
+            <img src="/vercel.svg" alt="" height={40} />
           </NextLink>
           <div
             className={classNames(styles.desktopNavLinks, styles.onlyDesktop)}
@@ -39,7 +39,7 @@ const MainLayout: FC<PropsWithChildren> = ({children}) => {
             {/*    Admin*/}
             {/*  </Link>*/}
             {/*</OnlyAdmin>*/}
-            <DesktopAuthButton/>
+            <DesktopAuthButton />
           </div>
         </Container>
       </div>
@@ -48,7 +48,7 @@ const MainLayout: FC<PropsWithChildren> = ({children}) => {
         {children}
       </Box>
 
-      <Footer/>
+      <Footer />
     </Stack>
   )
 }
