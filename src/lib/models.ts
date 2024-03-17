@@ -3,5 +3,6 @@ namespace Models {
     url: string
     light: string
     dark: string
+    margin: number
   }
 }

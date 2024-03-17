@@ -8,6 +8,7 @@ import {
   getQRCodeFormInitializer,
   getQRCodeFormValues,
   QRCodeForm,
+  qrCodeFormSchema,
   QRCodeFormValues
 } from "@/components/Forms/QRCodeForm"
 import {FormProvider, useForm} from "react-hook-form"
@@ -18,8 +19,15 @@ export default function QRCodePage() {
   const pathname = usePathname()
   const router = useRouter()
 
-  const getQRCodeFromSearchParams = useCallback(() => {
-    return Object.fromEntries(searchParams)
+  const getQRCodeFromSearchParams = useCallback((): Partial<Models.QRCode> => {
+    const parseResult = qrCodeFormSchema.safeParse(
+      Object.fromEntries(searchParams.entries())
+    )
+    if (parseResult.success) {
+      return parseResult.data
+    } else {
+      return getQRCodeFormValues()
+    }
   }, [searchParams])
 
   const [values, setValues] = useState<QRCodeFormValues>(
@@ -32,20 +40,18 @@ export default function QRCodePage() {
   const {watch} = formMethods
 
   useEffect(() => {
-    const subscription = watch((value, {name, type}) => {
-      if (type !== "change" || !name) return
-
-      setValues((prev) => ({...prev, ...value}))
-      const params = new URLSearchParams(searchParams)
-      Object.entries(value).forEach(([key, value]) => {
-        if (value) params.set(key, value)
-        else params.delete(key)
+    const subscription = watch((updates) => {
+      const newValues = {...values, ...updates}
+      setValues(newValues)
+      const params = new URLSearchParams({
+        ...newValues,
+        margin: newValues.margin.toString()
       })
       // @ts-ignore
       router.replace(`${pathname}?${params.toString()}`)
     })
     return () => subscription.unsubscribe()
-  }, [pathname, router, searchParams, watch])
+  }, [pathname, router, searchParams, values, watch])
 
   useEffect(() => {
     const img = document.getElementById("qr-image")
@@ -60,7 +66,8 @@ export default function QRCodePage() {
       color: {
         light: values.light,
         dark: values.dark
-      }
+      },
+      margin: values.margin
     })
       .then((url) => {
         img?.setAttribute("src", url)
@@ -76,7 +83,12 @@ export default function QRCodePage() {
         <Typography level="h1">QR Code</Typography>
         <FormProvider {...formMethods}>
           <Box mt={2}>
-            <QRCodeForm formId="new-qr-code-form" maxFieldWidth={300} />
+            <QRCodeForm
+              formId="new-qr-code-form"
+              maxFieldWidth={300}
+              onSubmit={console.log}
+              sx={{mb: 2}}
+            />
             <img
               id="qr-image"
               alt="qr code image preview"

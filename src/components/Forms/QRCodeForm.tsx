@@ -4,13 +4,7 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {LabeledField} from "../LabeledField"
 import {Alert, Box, FormHelperText, Input} from "@mui/joy"
 import {SxProps} from "@mui/joy/styles/types"
-import {z, ZodType} from "zod"
-
-export interface QRCodeFormValues {
-  url: string
-  light: string
-  dark: string
-}
+import {z} from "zod"
 
 interface QRCodeFormProps {
   onSubmit?: SubmitHandler<QRCodeFormValues>
@@ -68,6 +62,17 @@ export const QRCodeForm: FC<QRCodeFormProps> = (props) => {
         {errors.dark && <FormHelperText>{errors.dark.message}</FormHelperText>}
       </LabeledField>
 
+      <LabeledField
+        label="Margin"
+        error={!!errors.margin}
+        maxFieldWidth={maxFieldWidth}
+      >
+        <Input {...register("margin")} type="number" />
+        {errors.margin && (
+          <FormHelperText>{errors.margin.message}</FormHelperText>
+        )}
+      </LabeledField>
+
       {errors.root && (
         <Alert color="danger" variant="soft" sx={{mt: 2}}>
           {errors.root.message}
@@ -77,31 +82,37 @@ export const QRCodeForm: FC<QRCodeFormProps> = (props) => {
   )
 }
 
-const qrCodeFormSchema: ZodType<QRCodeFormValues> = z.object({
-  url: z.string(),
-  light: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
-    message: "Invalid hex color"
-  }),
-  dark: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
-    message: "Invalid hex color"
-  })
+export const qrCodeFormSchema = z.object({
+  url: z.string().default(""),
+  light: z
+    .string()
+    .refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+      message: "Invalid hex color"
+    })
+    .default("#ffffff"),
+  dark: z
+    .string()
+    .refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+      message: "Invalid hex color"
+    })
+    .default("#000000"),
+  margin: z.coerce.number().nonnegative().default(2)
 })
+
+export type QRCodeFormValues = z.infer<typeof qrCodeFormSchema>
 
 export function getQRCodeFormInitializer(
   qrCode?: Partial<Models.QRCode>
 ): UseFormProps<QRCodeFormValues> {
   return {
     resolver: zodResolver(qrCodeFormSchema),
-    defaultValues: getQRCodeFormValues(qrCode ?? null)
+    defaultValues: getQRCodeFormValues(qrCode),
+    mode: "onChange"
   }
 }
 
 export function getQRCodeFormValues(
-  qrCode: Partial<Models.QRCode> | null
+  qrCode: Partial<Models.QRCode> = {}
 ): QRCodeFormValues {
-  return {
-    url: qrCode?.url ?? "",
-    light: qrCode?.light ?? "#ffffff",
-    dark: qrCode?.dark ?? "#000000"
-  }
+  return qrCodeFormSchema.parse(qrCode)
 }
