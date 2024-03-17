@@ -3,7 +3,6 @@
 import {Box, Container, Typography} from "@mui/joy"
 import {useCallback, useEffect, useState} from "react"
 import QRCode from "qrcode"
-import styles from "./page.module.scss"
 import {
   getQRCodeFormInitializer,
   getQRCodeFormValues,
@@ -54,14 +53,14 @@ export default function QRCodePage() {
   }, [pathname, router, searchParams, values, watch])
 
   useEffect(() => {
-    const img = document.getElementById("qr-image")
+    const canvas = document.getElementById("qr-image") as HTMLCanvasElement
 
     if (!values.url) {
-      img?.removeAttribute("src")
+      canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height)
       return
     }
 
-    QRCode.toDataURL(values.url, {
+    QRCode.toCanvas(canvas, values.url, {
       width: undefined,
       color: {
         light: values.light,
@@ -69,9 +68,6 @@ export default function QRCodePage() {
       },
       margin: values.margin
     })
-      .then((url) => {
-        img?.setAttribute("src", url)
-      })
       .catch((err) => {
         console.error(err)
       })
@@ -89,11 +85,7 @@ export default function QRCodePage() {
               onSubmit={console.log}
               sx={{mb: 2}}
             />
-            <img
-              id="qr-image"
-              alt="qr code image preview"
-              className={styles.qrCode}
-            />
+            <canvas id="qr-image" />
           </Box>
         </FormProvider>
       </Container>
