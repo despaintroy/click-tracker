@@ -8,6 +8,8 @@ import {z, ZodType} from "zod"
 
 export interface QRCodeFormValues {
   url: string
+  light: string
+  dark: string
 }
 
 interface QRCodeFormProps {
@@ -46,6 +48,24 @@ export const QRCodeForm: FC<QRCodeFormProps> = (props) => {
         {errors.url && <FormHelperText>{errors.url.message}</FormHelperText>}
       </LabeledField>
 
+      <LabeledField
+        label="Light Color"
+        error={!!errors.light}
+        maxFieldWidth={maxFieldWidth}
+      >
+        <input {...register("light")} type="color" />
+        {errors.light && <FormHelperText>{errors.light.message}</FormHelperText>}
+      </LabeledField>
+
+      <LabeledField
+        label="Dark Color"
+        error={!!errors.dark}
+        maxFieldWidth={maxFieldWidth}
+      >
+        <input {...register("dark")} type="color" />
+        {errors.dark && <FormHelperText>{errors.dark.message}</FormHelperText>}
+      </LabeledField>
+
       {errors.root && (
         <Alert color="danger" variant="soft" sx={{mt: 2}}>
           {errors.root.message}
@@ -56,8 +76,15 @@ export const QRCodeForm: FC<QRCodeFormProps> = (props) => {
 }
 
 const qrCodeFormSchema: ZodType<QRCodeFormValues> = z.object({
-  url: z.string()
-})
+    url: z.string(),
+    light: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+      message: "Invalid hex color"
+    }),
+    dark: z.string().refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+      message: "Invalid hex color"
+    })
+  }
+)
 
 export function getQRCodeFormInitializer(
   qrCode?: Models.QRCode
@@ -72,6 +99,8 @@ export function getQRCodeFormValues(
   qrCode: Models.QRCode | null
 ): QRCodeFormValues {
   return {
-    url: qrCode?.url ?? ""
+    url: qrCode?.url ?? "",
+    light: qrCode?.light ?? "#ffffff",
+    dark: qrCode?.dark ?? "#000000"
   }
 }

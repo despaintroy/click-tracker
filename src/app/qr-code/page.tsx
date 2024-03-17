@@ -28,22 +28,27 @@ export default function QRCodePage() {
   }, [watch])
 
   useEffect(() => {
-    const url = values.url
     const img = document.getElementById("qr-image")
 
-    if (!url) {
+    if (!values.url) {
       img?.removeAttribute("src")
       return
     }
 
-    QRCode.toDataURL(url)
+    QRCode.toDataURL(values.url, {
+      width: undefined,
+      color: {
+        light: values.light,
+        dark: values.dark
+      }
+    })
       .then((url) => {
         img?.setAttribute("src", url)
       })
       .catch((err) => {
         console.error(err)
       })
-  }, [values.url])
+  }, [values])
 
   return (
     <main>
