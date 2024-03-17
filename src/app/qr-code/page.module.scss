@@ -1,0 +1,7 @@
+.qrCode {
+  display: none;
+
+  &[src] {
+    display: block;
+  }
+}

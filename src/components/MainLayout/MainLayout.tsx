@@ -31,9 +31,9 @@ const MainLayout: FC<PropsWithChildren> = ({children}) => {
           <div
             className={classNames(styles.desktopNavLinks, styles.onlyDesktop)}
           >
-            {/*<Link component={NextLink} href="/products">*/}
-            {/*  Shop*/}
-            {/*</Link>*/}
+            <Link component={NextLink} href="/qr-code">
+              QR Code
+            </Link>
             {/*<OnlyAdmin>*/}
             {/*  <Link component={NextLink} href="/admin">*/}
             {/*    Admin*/}
