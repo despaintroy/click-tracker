@@ -1,0 +1,42 @@
+.navBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: white;
+  // background-color: rgba(255, 255, 255, 0.8);
+  // backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  height: 4rem;
+}
+
+.desktopNavLinks {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.drawer {
+  z-index: 99 !important;
+}
+
+.onlyDesktop {
+  @media (max-width: 600px) {
+    display: none !important;
+  }
+}
+
+.onlyMobile {
+  @media (min-width: 601px) {
+    display: none !important;
+  }
+}
+
+a.mobileNavLink {
+  font-size: 1.3rem;
+  padding-block: 1rem;
+
+  + .mobileNavLink {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
