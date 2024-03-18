@@ -4,10 +4,13 @@ import MainLayout from "@/components/MainLayout"
 import {Metadata} from "next"
 
 export const metadata: Metadata = {
-  title: "Troy DeSpain Photography",
-  description: "Shop digital downloads of LDS temples by Troy DeSpain",
+  title: "Click Tracker",
   authors: {name: "Troy DeSpain"},
-  creator: "Troy DeSpain"
+  creator: "Troy DeSpain",
+  robots:{
+    index: false,
+    follow: false
+  }
 }
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
