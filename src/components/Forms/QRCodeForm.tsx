@@ -96,7 +96,7 @@ export const qrCodeFormSchema = z.object({
       message: "Invalid hex color"
     })
     .default("#000000"),
-  margin: z.coerce.number().nonnegative().default(2)
+  margin: z.coerce.number().nonnegative().default(3)
 })
 
 export type QRCodeFormValues = z.infer<typeof qrCodeFormSchema>

@@ -1,9 +1,21 @@
 import {NextResponse} from "next/server"
-import {qrCodeFormSchema} from "@/components/Forms/QRCodeForm"
 import QRCode from "qrcode"
 import {z} from "zod"
 
-const qrCodeEndpointSchema = qrCodeFormSchema.extend({
+const qrCodeEndpointSchema = z.object({
+  url: z.string().default(""),
+  light: z
+    .string()
+    .refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+      message: "Invalid hex color"
+    })
+    .default("#ffffff"),
+  dark: z
+    .string()
+    .refine((value) => /^#[0-9a-fA-F]{6}$/.test(value), {
+      message: "Invalid hex color"
+    })
+    .default("#000000"),
   margin: z
     .string()
     .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {

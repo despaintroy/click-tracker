@@ -1,7 +1,7 @@
 "use client"
 
 import {Box, Button, Container, Stack, Typography} from "@mui/joy"
-import {useCallback, useEffect, useState} from "react"
+import {Suspense, useCallback, useEffect, useState} from "react"
 import QRCode from "qrcode"
 import {
   getQRCodeFormInitializer,
@@ -15,7 +15,7 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation"
 import {QRCodeEndpoint} from "@/app/api/generate-code/route"
 import styles from "./page.module.scss"
 
-export default function QRCodePage() {
+function QRCodePage() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
@@ -79,47 +79,57 @@ export default function QRCodePage() {
   }, [values])
 
   return (
-    <main>
-      <Container>
-        <Typography level="h1">QR Code</Typography>
-        <FormProvider {...formMethods}>
-          <Box mt={2}>
-            <QRCodeForm
-              formId="new-qr-code-form"
-              maxFieldWidth={300}
-              onSubmit={console.log}
-              sx={{mb: 2}}
-            />
-            <canvas id="qr-image" className={styles.qrCanvas} aria-hidden={!hasCode} />
-            <Stack direction="row" spacing={2} mt={2}>
-              <Button
-                component="a"
-                download="my-qr-code.svg"
-                href={`/api/generate-code?${new URLSearchParams({
-                  ...values,
-                  margin: values.margin.toString(),
-                  fileType: "svg"
-                } satisfies QRCodeEndpoint).toString()}`}
-                disabled={!hasCode}
-              >
-                Download SVG
-              </Button>
-              <Button
-                component="a"
-                download="my-qr-code.png"
-                href={`/api/generate-code?${new URLSearchParams({
-                  ...values,
-                  margin: values.margin.toString(),
-                  fileType: "png"
-                } satisfies QRCodeEndpoint).toString()}`}
-                disabled={!hasCode}
-              >
-                Download PNG
-              </Button>
-            </Stack>
-          </Box>
-        </FormProvider>
-      </Container>
-    </main>
+    <>
+      <Typography level="h1">QR Code</Typography>
+      <FormProvider {...formMethods}>
+        <Box mt={2}>
+          <QRCodeForm
+            formId="new-qr-code-form"
+            maxFieldWidth={300}
+            onSubmit={console.log}
+            sx={{mb: 2}}
+          />
+          <canvas
+            id="qr-image"
+            className={styles.qrCanvas}
+            aria-hidden={!hasCode}
+          />
+          <Stack direction="row" spacing={2} mt={2}>
+            <Button
+              component="a"
+              download="my-qr-code.svg"
+              href={`/api/generate-code?${new URLSearchParams({
+                ...values,
+                margin: values.margin.toString(),
+                fileType: "svg"
+              } satisfies QRCodeEndpoint).toString()}`}
+              disabled={!hasCode}
+            >
+              Download SVG
+            </Button>
+            <Button
+              component="a"
+              download="my-qr-code.png"
+              href={`/api/generate-code?${new URLSearchParams({
+                ...values,
+                margin: values.margin.toString(),
+                fileType: "png"
+              } satisfies QRCodeEndpoint).toString()}`}
+              disabled={!hasCode}
+            >
+              Download PNG
+            </Button>
+          </Stack>
+        </Box>
+      </FormProvider>
+    </>
+  )
+}
+
+export default function QRCodePageWrapper() {
+  return (
+    <Suspense>
+      <QRCodePage />
+    </Suspense>
   )
 }
