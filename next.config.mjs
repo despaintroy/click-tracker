@@ -1,12 +1,12 @@
-/** @type {import('next').NextConfig} */
+/** @type {import("next").NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    experimental: {
-        typedRoutes: true,
-        serverActions: {
-            allowedOrigins: []
-        }
+  reactStrictMode: true,
+  experimental: {
+    typedRoutes: true,
+    serverActions: {
+      allowedOrigins: ["https://click.troydespain.com/"]
     }
-};
+  }
+}
 
-export default nextConfig;
+export default nextConfig

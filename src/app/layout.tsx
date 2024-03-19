@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Click Tracker",
   authors: {name: "Troy DeSpain"},
   creator: "Troy DeSpain",
-  robots:{
+  robots: {
     index: false,
     follow: false
   }
