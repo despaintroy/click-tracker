@@ -1,19 +1,22 @@
+// To apply changes:
+// 1. prisma migrate dev --name name-of-migration
+// 2. prisma migrate deploy
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  // Uses connection pooling
-  url = env("POSTGRES_PRISMA_URL")
-  // Uses direct connection, ⚠️ make sure to keep this to `POSTGRES_URL_NON_POOLING`
-  // or you'll have dangling databases from migrations
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
   email     String   @unique
+  isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }
