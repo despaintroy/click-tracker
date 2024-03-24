@@ -2,6 +2,7 @@ import * as React from "react"
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry"
 import MainLayout from "@/components/MainLayout"
 import {Metadata} from "next"
+import {UserProvider} from "@auth0/nextjs-auth0/client"
 
 export const metadata: Metadata = {
   title: "Click Tracker",
@@ -20,11 +21,13 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <meta name="theme-color" content="#fff" />
       </head>
 
-      <body>
-        <ThemeRegistry>
-          <MainLayout>{children}</MainLayout>
-        </ThemeRegistry>
-      </body>
+      <UserProvider>
+        <body>
+          <ThemeRegistry>
+            <MainLayout>{children}</MainLayout>
+          </ThemeRegistry>
+        </body>
+      </UserProvider>
     </html>
   )
 }

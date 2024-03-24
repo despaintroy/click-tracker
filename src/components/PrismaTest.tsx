@@ -13,7 +13,9 @@ const PrismaTest: FC = () => {
 
   const onClickCreate = () => {
     createUser({
-      name: "Troy DeSpain", email: "despaintroy@gmail.com", id: crypto.randomUUID()
+      name: "Troy DeSpain",
+      email: "despaintroy@gmail.com",
+      id: crypto.randomUUID()
     })
       .then((user) => console.log(`Created user: ${user.name}`))
       .catch(console.error)
