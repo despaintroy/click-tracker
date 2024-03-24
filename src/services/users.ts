@@ -21,3 +21,10 @@ export async function deleteAllUsers() {
 export async function updateUser(id: string, data: UserUpdateInput) {
   return prisma.user.update({where: {id}, data})
 }
+
+export async function makeAdmin(email: string) {
+  return prisma.user.update({
+    where: {email},
+    data: {isAdmin: true}
+  })
+}

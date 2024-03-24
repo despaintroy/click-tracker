@@ -2,7 +2,7 @@
 
 import {FC} from "react"
 import {Button} from "@mui/joy"
-import {createUser, deleteAllUsers, getUsers, updateUser} from "@/services/users"
+import {createUser, deleteAllUsers, getUsers, makeAdmin} from "@/services/users"
 
 const PrismaTest: FC = () => {
   const onClickGet = () => {
@@ -26,7 +26,7 @@ const PrismaTest: FC = () => {
   }
 
   const onClickMakeAdmin = () => {
-    updateUser("996b8eb0-39dd-49f1-ba88-8f0410c2e19c", {isAdmin: true})
+    makeAdmin("despaintroy@gmail.com")
       .then((user) => console.log(`Updated user: ${user.name} to admin`))
       .catch(console.error)
   }
